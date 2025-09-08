@@ -76,7 +76,7 @@ This project uses the official [Python bindings](https://github.com/aldebaran/li
     or
     ```sh
       git submodule init
-      git submodule add https://github.com:Robotics-Empowerment-Designer/pepper-middleware.git pepper-middleware
+      git submodule add https://github.com/Robotics-Empowerment-Designer/pepper-middleware.git pepper-middleware
     ```
 3. For Sawyer: Initialize sawyer_middleware subrepo in your project
      ```sh
@@ -86,7 +86,7 @@ This project uses the official [Python bindings](https://github.com/aldebaran/li
     or
     ```sh
       git submodule init
-      git submodule add https://github.com:Robotics-Empowerment-Designer/sawyer-middleware.git sawyer-middleware
+      git submodule add https://github.com/Robotics-Empowerment-Designer/sawyer-middleware.git sawyer-middleware
     ```
 4. If you want to use Temi, install the Temi Middleware application on the robot and start the app "Mqtt" in the app overview.  
 
