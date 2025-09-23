@@ -1,0 +1,45 @@
+<script type="text/javascript">
+    RED.nodes.registerType("OpenAIChat", {
+        category: "Pepper",
+        color: "#E2D96E",
+        defaults: {
+            systemPrompt: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-comments",
+        label: function () {
+            return this.name || "OpenAI Chat";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="OpenAIChat">
+    <div class="form-row">
+        <label for="node-input-systemPrompt"><i class="icon-tag"></i> System Prompt</label>
+        <textarea id="node-input-systemPrompt" rows="5" style="width:100%;"
+                  placeholder="z.B. 'Du bist Milo, ein freundlicher Roboter.'"></textarea>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="OpenAIChat">
+    <p>
+        Sends the content of <code>msg.payload</code> to OpenAI Chat (<code>gpt-4o-mini</code> ) and returns the reply as a string.
+    </p>
+
+    <h3>Options</h3>
+    <ul>
+        <li><b>System Prompt:</b> Context text that is added before the conversation.</li>
+    </ul>
+
+    <h3>Inputs</h3>
+    <ul>
+        <li><code>msg.payload:</code> User message (string)</li>
+    </ul>
+
+    <h3>Outputs</h3>
+    <ul>
+        <li><code>msg.payload:</code> Model response (string)</li>
+    </ul>
+</script>
+

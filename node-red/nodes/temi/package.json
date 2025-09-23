@@ -21,12 +21,9 @@
       "temitele": "temitele/tele.js",
       "wait": "wait/wait.js",
       "cleartopic": "cleartopic/cleartopic.js",
-
       "announceEventsMMH": "eventsData/temiAnnounceEventsMMH.js",
-
       "temichat": "temichat/temichat.js",
-      "attention": "temiattention/attention.js",
-      "updateLocations": "updateLocations/updateLocations.js"
+      "attention": "temiattention/attention.js"
 
 	
 

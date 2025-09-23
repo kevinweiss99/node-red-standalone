@@ -19,6 +19,7 @@
             "LEDFade": "ledFade/ledFade.js",
             "move": "move/move.js",
             "moveAlong": "moveAlong/moveAlong.js",
+            "OpenAIChat": "openai-chat/openai-chat.js",
             "say": "say/say.js",
             "showImage": "showImage/showImage.js",
             "showText": "showText/showText.js",
@@ -31,6 +32,7 @@
     },
     "dependencies": {
         "socket.io-client": "^4.5.0",
-        "node-red-contrib-base":"file:../base"
+        "node-red-contrib-base":"file:../base",
+        "axios": "^1.6.0"
     }
 }

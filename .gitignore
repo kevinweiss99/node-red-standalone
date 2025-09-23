@@ -400,6 +400,8 @@ dist
 **/node-red/data
 **/node-red/data-salt
 **/node-red/data-pepper
+**/node-red/group1
+**/node-red/group2
 
 # Docker
 **/core
