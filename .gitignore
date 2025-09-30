@@ -6,7 +6,6 @@ instance/*
 !instance/.gitignore
 .webassets-cache
 .env
-.gitmodules
 .vscode
 .idea
 *.code-workspace

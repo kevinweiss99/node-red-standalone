@@ -42,13 +42,22 @@ declare -A std_env_vars=(
   ["MQTT_BROKER_PASSWORD"]=""
 )
 
+interactive_vars=(
+  "OPENAI_API_KEY"
+  "ROBOT_IP_PEPPER"
+  "ROBOT_IP_SAWYER"
+  "MQTT_BROKER_URL"
+  "MQTT_BROKER_USERNAME"
+  "MQTT_BROKER_PASSWORD"
+)
+
 # Print menu to ask for values. Pressing Enter uses the standart-values defined above
 #   ["NODE_ENV"] is either dev or prod
 echo "Enter your preferred environment variable or press [Enter] to choose the default value."
-for key in "${!std_env_vars[@]}"; do
-  read -r -p "$key (${std_env_vars[$key]}): " value
+for var in "${interactive_vars[@]}"; do
+  read -r -p "$var (${std_env_vars[$var]}): " value
   if [[ -n $value ]]; then
-    std_env_vars[$key]=$value
+    std_env_vars[$var]=$value
   fi
 done
 
