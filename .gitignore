@@ -437,3 +437,5 @@ Backup of *.doc*
 
 /sawyer/
 **/docker-compose.bak
+
+pepper-middleware/
