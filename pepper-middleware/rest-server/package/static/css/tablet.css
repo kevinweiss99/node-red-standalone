@@ -1,0 +1,22 @@
+body {
+    overflow-y: hidden;
+    background-color: black;
+    white-space: nowrap;
+}
+
+h1 {
+    font-size: 5em;
+    color: white;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    height: 100vh;
+    flex-wrap: wrap;
+}

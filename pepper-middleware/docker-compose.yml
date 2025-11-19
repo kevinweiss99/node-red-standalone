@@ -1,0 +1,66 @@
+services:
+
+    mosquitto-pepper:
+      image: mosquitto
+      container_name: mosquitto-pepper
+      environment:
+        - MQTT_PORT=${MQTT_PORT_PEPPER?error}
+        - TZ=Europe/Berlin
+      network_mode: host
+
+    rest-server-pepper:
+      image: rest-server
+      container_name: pepper-rest-server
+      volumes:
+        - ./rest-server:/home/
+      environment:
+        - ROBOT_NAME=${ROBOT_NAME_PEPPER?error}
+        - ROBOT_IP=${ROBOT_IP_PEPPER?error}
+        - MQTT_PORT=${MQTT_PORT_PEPPER?error}
+        - FLASK_PORT=${FLASK_PORT_PEPPER?error}
+        - FLASK_DEBUG=${FLASK_DEBUG:-0} # default 0
+        - LOG_LEVEL=${REST_LOG_LEVEL:-INFO}
+        - QI_LOG_LEVEL=${QI_LOG_LEVEL:-4} # [0, 6] (6=verbose)
+        - PYTHONUNBUFFERED=${PYTHONUNBUFFERED:-TRUE}
+        - HOSTNAME=${HOSTNAME}
+        - TZ=Europe/Berlin
+      network_mode: host
+      depends_on:
+        - mosquitto-pepper
+      healthcheck:
+        test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost:${FLASK_PORT_PEPPER?error}/pepper/session/shutdown-if-dead"]
+        interval: 5s
+        timeout: 1s
+        retries: 5
+        start_period: 30s
+      restart: always
+  
+    # ---------------------------------------------------------------
+    mdns:
+      image: mdns
+      container_name: mdns_pepper
+      volumes:
+        - ./mdns:/home/:ro # read only
+        - /var/run/dbus:/var/run/dbus
+        - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socke
+      environment:
+        - HOSTNAME=${HOSTNAME}
+        - TZ=Europe/Berlin
+      network_mode: host
+
+    # esp:
+    #   image: esp
+    #   environment:
+    #     - ESP_OTA_PATH=/root/.arduino15/packages/esp32/hardware/esp32/2.0.5/tools
+    #     - ESP_IP=192.168.178.82
+    #     - ESP_OTA_PW=123456
+    #     - TZ=Europe/Berlin
+    #   network_mode: host
+
+    # mkdocs:
+    #   image: squidfunk/mkdocs-material
+    #   volumes:
+    #     - ./mkdocs:/docs
+    #   environment:
+    #     - TZ=Europe/Berlin
+    #   network_mode: host

@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+    # THIS COMPOSE FILE IS MEANT TO BE INCLUDED IN THE NODE-RED PARENT COMPOSE FILE VIA THE INCLUDE COMMAND, NOT TO BE USED ON ITS OWN
+    mosquitto-pepper:
+      image: mosquitto
+      environment:
+        - MQTT_PORT=${MQTT_PORT_PEPPER?error}
+        - TZ=Europe/Berlin
+      network_mode: host
+
+    rest-server-pepper:
+      image: rest-server
+      volumes:
+        - ./rest-server:/home/
+      environment:
+        - ROBOT_NAME=${ROBOT_NAME_PEPPER?error}
+        - ROBOT_IP=${ROBOT_IP_PEPPER?error}
+        - MQTT_PORT=${MQTT_PORT_PEPPER?error}
+        - FLASK_PORT=${FLASK_PORT_PEPPER?error}
+        - FLASK_DEBUG=${FLASK_DEBUG:-0} # default 0
+        - LOG_LEVEL=${PEPPER_REST_SERVER_LOG_LEVEL:-INFO}
+        - QI_LOG_LEVEL=${QI_LOG_LEVEL:-4} # [0, 6] (6=verbose)
+        - PYTHONUNBUFFERED=${PYTHONUNBUFFERED:-0}
+        - HOSTNAME=${HOSTNAME}
+        - TZ=Europe/Berlin
+      network_mode: host
+      depends_on:
+        - mosquitto-pepper

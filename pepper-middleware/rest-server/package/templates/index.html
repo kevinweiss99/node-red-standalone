@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="static/css/debug.css">
+    <script src="static/js/socket.io.min.js"></script>
+    <script src="static/js/debug.js" defer></script>
+</head>
+
+<body>
+    <input id="easter_eggs" type="hidden" value="{{easter_eggs}}">
+
+    <h1>Debug page for {{robot_name}}</h1>
+
+    <h3>Flask IP: {{flask_ip}}</h3>
+    <h3>
+        Connction type: <div id="connection_type">{{connection_type}}</div>
+    </h3>
+    <h3>
+        Battery: <div id="BatteryChargeChanged">{{battery}}</div> %
+    </h3>
+    <h3>
+        Temperature (KneePitch): <div id="temperature">{{temperature}}</div> °C
+    </h3>
+    <h3>
+        General volume:
+        <input type="range" min="1" max="100" value="{{general_volume}}" class="slider" id="volumeSlider">
+    </h3>
+    <h3>
+        TTS volume: <div id="tts_volume">{{tts_volume}}</div> %
+    </h3>
+    <h3>
+        <input type="text" id="textInput" placeholder="Text to say" />
+        <button type="submit" onclick="sayText()">Say</button>
+    </h3>
+    <h3>
+        <button type="submit" onclick="stopServices()">Stop services</button>
+        <button type="submit" onclick="socket.emit('/site/debug')">Debug</button>
+    </h3>
+    <h3>
+        <button type="submit" onclick="socket.emit('/robot/system/shutdown')">Shutdown</button>
+        <button type="submit" onclick="socket.emit('/robot/system/reboot')">Reboot</button>
+        <button type="submit" onclick="socket.emit('/robot/motion/wakeup')">WakeUp</button>
+        <button type="submit" onclick="socket.emit('/robot/motion/rest')">Rest</button>
+    </h3>
+    <h3>
+        ESP connection: <div id="esp_connection">{{esp_connection}}</div>
+    </h3>
+    <h3>
+        Is thermal camera running: <div id="camera_status">{{camera_status}}</div>
+    </h3>
+    <div>
+        <button type="submit" onclick="socket.emit('/camera/start', 'true')">Start thermal camera</button>
+        <button type="submit" onclick="socket.emit('/camera/stop')">Stop thermal camera</button>
+    </div>
+    <div>
+        <div class="img_container">
+            <h3>Last thermal camera frame:</h3>
+            </form>
+            <img id="current_img" src="/static/img/camera_frame.png">
+        </div>
+    </div>
+</body>
+
+</html>
