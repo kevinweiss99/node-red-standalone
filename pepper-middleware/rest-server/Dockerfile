@@ -8,6 +8,7 @@ RUN apt-get update
 RUN apt-get install curl -y
 RUN apt-get install python3-pip -y
 RUN apt-get install libicu-dev -y
+RUN apt-get install nano
 
 RUN pip install --upgrade pip
 COPY requirements.txt .
