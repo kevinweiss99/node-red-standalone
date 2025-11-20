@@ -36,10 +36,6 @@ def generate():
             b"\r\n"
         )
 
-@app.route("/stream")
+@app.route("/robot/camera/stream")
 def stream():
     return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
-
-@app.route("/")
-def index():
-    return "<h1>Pepper Live Stream</h1><img src='/stream'>"
