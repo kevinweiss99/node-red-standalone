@@ -12,12 +12,16 @@ module.exports = RED => {
 
         node.on("input", msg => {
             waitingNode = msg;
-            node.status({ fill: "blue", shape: "dot", text: `Performing ${config.movement} with ${config.hand} hand` });
+            node.status({ fill: "blue", shape: "dot", text: `Performing ${config.movement} with ${config.hand}` });
 
-            const path = `/robot/motion/arm_${config.hand.toLowerCase()}_${config.movement.toLowerCase()}`;
-            ch.emit(path);
+            // Neuer, korrekter Pfad (passend zum Python-Server)
+            const path = `/robot/motion/arm/${config.movement.toLowerCase()}`;
 
-            ch.socket.once(`${path}/finished`, () => {
+            // Hand-Parameter wird mitgesendet
+            ch.emit(path, { hand: config.hand === "Left" ? "LHand" : "RHand" });
+
+            // Auf Abschluss warten
+            ch.socket.once(`/motion/arm/${config.movement.toLowerCase()}/finished`, () => {
                 if (waitingNode) {
                     node.send(waitingNode);
                     waitingNode = null;
@@ -26,6 +30,7 @@ module.exports = RED => {
             });
         });
 
+        // Reset falls Node neu initialisiert wird
         events.subscribe(EventPubSub.RESET_NODE_STATE, () => {
             waitingNode = null;
             node.status({});
