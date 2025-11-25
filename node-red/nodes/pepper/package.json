@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "node-red": {
         "nodes": {
+            "armGesture": "armGesture/armGesture.js",
             "animation": "animation/animation.js",
             "awarenessConfig": "awarenessConfig/awarenessConfig.js",
             "chatbot": "chatbot/chatbot.js",
