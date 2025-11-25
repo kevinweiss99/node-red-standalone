@@ -60,6 +60,48 @@ def set_head_yaw(angle = None):
 
     return Response(status=200)
 
+@socketio.on("/robot/motion/arm/fingerpoint")
+@app.route("/robot/motion/arm/fingerpoint", methods=["POST"])
+@log("/robot/motion/arm/fingerpoint")
+def arm_fingerpoint(hand=None):
+    try:
+        if hand is None:
+            hand = request.get_json(force=True, silent=True)["hand"]
+
+        if hand == "RHand":
+            motion.setAngles("RShoulderPitch", -0.3, 0.2)
+            motion.setAngles("RElbowRoll", 1.0, 0.2)
+        elif hand == "LHand":
+            motion.setAngles("LShoulderPitch", -0.3, 0.2)
+            motion.setAngles("LElbowRoll", -1.0, 0.2)
+
+        socketio_wrapper("/motion/arm/fingerpoint/finished")
+        return Response(status=200)
+    except Exception as e:
+        logger.error(e)
+        return Response(str(e), status=500)
+
+@socketio.on("/robot/motion/arm/thumbup")
+@app.route("/robot/motion/arm/thumbup", methods=["POST"])
+@log("/robot/motion/arm/thumbup")
+def arm_thumbup(hand=None):
+    try:
+        if hand is None:
+            hand = request.get_json(force=True, silent=True)["hand"]
+
+        if hand == "RHand":
+            motion.setAngles("RShoulderPitch", -0.4, 0.2)
+            motion.setAngles("RElbowRoll", 0.5, 0.2)
+        elif hand == "LHand":
+            motion.setAngles("LShoulderPitch", -0.4, 0.2)
+            motion.setAngles("LElbowRoll", -0.5, 0.2)
+
+        socketio_wrapper("/motion/arm/thumbup/finished")
+        return Response(status=200)
+    except Exception as e:
+        logger.error(e)
+        return Response(str(e), status=500)
+    
 @socketio.on("/robot/motion/hand/open")
 @app.route("/robot/motion/hand/open", methods=["POST"])
 @log("/robot/motion/hand/open")
