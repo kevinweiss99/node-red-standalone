@@ -1,7 +1,7 @@
 module.exports = RED => {
     const http = require("http");
 
-    function CheckFingerUp(config) {
+  function ArmGesture(config) {
         RED.nodes.createNode(this, config);
         const node = this;
         node.url = "http://172.30.36.198:5001/robot/motion/arm/fingerpoint";
@@ -35,5 +35,5 @@ module.exports = RED => {
         });
     }
 
-    RED.nodes.registerType("CheckForFingerUp", CheckFingerUp);
+    RED.nodes.registerType("ArmGesture", ArmGesture);
 }
