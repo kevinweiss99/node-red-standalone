@@ -26,6 +26,7 @@ with app.test_request_context():
 animation = get_service(session, "ALAnimationPlayer")
 awareness = get_service(session, "ALBasicAwareness")
 audio = get_service(session, "ALAudioDevice")
+audio_player = get_service(session, "ALAudioPlayer")
 behavior = get_service(session, "ALBehaviorManager")
 barcode = get_service(session, "ALBarcodeReader")
 battery = get_service(session, "ALBattery")
