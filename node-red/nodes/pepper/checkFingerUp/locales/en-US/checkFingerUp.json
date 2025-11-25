@@ -1,6 +1,6 @@
 {
-    "Show text": {
+    "IsFingerUp": {
         "connectionError": "Connection error",
-        "tabletText": "Tablet text"
+        "finger_up": "False"
     }
 }
