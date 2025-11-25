@@ -1,55 +1,39 @@
 module.exports = RED => {
-    const socket = require("../connection").socket;
-    const ConnectionHelper = require("../connectionHelper");
-    const EventPubSub = require('node-red-contrib-base/eventPubSub');
+    const http = require("http");
 
-    const events = new EventPubSub();
-
-    function ActivateArmGesture(config) {
+    function CheckFingerUp(config) {
         RED.nodes.createNode(this, config);
         const node = this;
-
-        // Bewegungspfad bestimmen
-        if (config.movement === "FingerPoint") {
-            node.path = "/robot/motion/arm/fingerpoint";
-        } else {
-            node.path = "/robot/motion/arm/thumbup";
-        }
-
-        let waitingNode = null;
-        const ch = new ConnectionHelper(socket, node);
+        node.url = "http://172.30.36.198:5001/robot/motion/arm/fingerpoint";
 
         node.on("input", msg => {
-            waitingNode = msg;
-            node.status({ fill: "blue", shape: "dot", text: node.type + ".moving" });
-            // Hand-Parameter senden (RHand oder LHand)
-            const hand = config.hand === "Left" ? "LHand" : "RHand";
-            ch.emit(node.path, { hand: hand });
-        });
+            const data = JSON.stringify(msg.payload);
+            const url = new URL(node.url);
 
-        // Listener für FingerPoint oder ThumbUp
-        if (config.movement === "FingerPoint") {
-            ch.socket.on("/motion/arm/fingerpoint/finished", () => {
-                if (!waitingNode) return;
-                node.send(waitingNode);
-                waitingNode = null;
-                node.status({});
+            const req = http.request({
+                hostname: url.hostname,
+                port: url.port,
+                path: url.pathname,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Content-Length": Buffer.byteLength(data)
+                }
+            }, res => {
+                let body = "";
+                res.on("data", chunk => body += chunk);
+                res.on("end", () => {
+                    try { msg.payload = JSON.parse(body); } 
+                    catch { msg.payload = body; }
+                    node.send(msg);
+                });
             });
-        } else {
-            ch.socket.on("/motion/arm/thumbup/finished", () => {
-                if (!waitingNode) return;
-                node.send(waitingNode);
-                waitingNode = null;
-                node.status({});
-            });
-        }
 
-        // Reset bei Neustart
-        events.subscribe(EventPubSub.RESET_NODE_STATE, () => {
-            waitingNode = null;
-            node.status({});
+            req.on("error", err => node.error("Request failed: " + err.message));
+            req.write(data);
+            req.end();
         });
     }
 
-    RED.nodes.registerType("ArmGesture", ActivateArmGesture);
-};
+    RED.nodes.registerType("CheckForFingerUp", CheckFingerUp);
+}

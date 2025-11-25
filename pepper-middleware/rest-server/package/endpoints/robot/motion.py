@@ -10,6 +10,7 @@ from .tablet import show_default_image
 from ...decorator import log
 from ...mqtt import socketio_wrapper
 
+
 logger = logging.getLogger(__name__)
 
 @socketio.on("/robot/motion/rest")
