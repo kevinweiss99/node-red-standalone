@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @log("/robot/audio_player/attention")
 def play_uploaded_file():
     try:
-        audio_player.playFile("home/nao/attention.wav")
+        audio_player.playFile("/home/nao/attention.wav")
     except Exception as e:
         return Response(str(e), 400)        
 
