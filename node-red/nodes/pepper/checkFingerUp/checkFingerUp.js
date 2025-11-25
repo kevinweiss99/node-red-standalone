@@ -6,8 +6,6 @@ module.exports = RED => {
 
     const events = new EventPubSub();
 
-    
-
     function resetNodeState(ch) {
         if (lastReset + 100 > Date.now()) {
             return;

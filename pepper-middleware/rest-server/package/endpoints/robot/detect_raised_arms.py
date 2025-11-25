@@ -1,6 +1,6 @@
 import logging,traceback,cv2,numpy as np,base64
 from threading import Thread,Event
-from flask import Response
+from flask import Response, jsonify
 from ...pepper.connection import video
 from ...server import app,socketio
 import cv2
@@ -58,7 +58,7 @@ def camera_finger_up() -> Response:
             lm = result.multi_hand_landmarks[0].landmark
             finger_up = is_index_finger_up(lm)
         # Just return the boolean that we got from the mediapipe detection
-        return Response(f"{finger_up}", status=200)
+        return jsonify({"finger_up": finger_up})
     except Exception as e:
         return Response(f"Camera error: {e}",status=500)
     finally:
