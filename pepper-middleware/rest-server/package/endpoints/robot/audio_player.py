@@ -97,6 +97,23 @@ def play_webstream():
         return Response(str(e), status=500)
     return Response(status=200)
 
+@app.route("/robot/audio_player/webstream/async", methods=["GET"])
+@log("/robot/audio_player/webstream/async")
+def play_webstream_async():
+    """
+    Example: GET /robot/audio_player/webstream/async?url=http://stream.antennethueringen.de/live/aac-64/stream.antennethueringen.de/
+    Plays the web radio
+    """
+    url = request.args.get("url")
+    if not url:
+        return Response("Missing 'url' query parameter", status=400)
+
+    try:
+        audio_player.playWebStream(url, _async=True)
+    except Exception as e:
+        return Response(str(e), status=500)
+    return Response(status=200)
+
 @app.route("/robot/audio_player/stop", methods=["GET"])
 @log("/robot/audio_player/stop")
 def stop_playback():
