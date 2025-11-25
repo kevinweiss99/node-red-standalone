@@ -2,6 +2,7 @@ module.exports = RED => {
     const socket = require("../connection").socket;
     const ConnectionHelper = require("../connectionHelper");
     const EventPubSub = require('node-red-contrib-base/eventPubSub');
+    const http = require("http");
     let lastReset = 0;
 
     const events = new EventPubSub();
@@ -18,22 +19,23 @@ module.exports = RED => {
     function CheckFingerUp(config) {
         RED.nodes.createNode(this, config);
         const node = this;
-
-        node.path = "/robot/camera/finger_up";
-
-        const ch = new ConnectionHelper(socket, node);
-
-        ch.socket.on(node.path, data => {
-            const msg = { payload: data };
-            node.send(msg);
-        });
+        node.url = "http://172.30.36.198:5001/robot/camera/finger_up"; // adjust URL
 
         node.on("input", msg => {
-            ch.emit(null, node.path);
-        });
-
-        events.subscribe(EventPubSub.RESET_NODE_STATE, () => {
-            resetNodeState(ch);
+            http.get(node.url, res => {
+                let data = "";
+                res.on("data", chunk => data += chunk);
+                res.on("end", () => {
+                    try {
+                        msg.payload = JSON.parse(data);
+                        node.send(msg);
+                    } catch (err) {
+                        node.error("Invalid JSON: " + err.message);
+                    }
+                });
+            }).on("error", err => {
+                node.error("Failed to fetch /robot/camera/finger_up: " + err.message);
+            });
         });
     }
 
