@@ -6,6 +6,8 @@ module.exports = RED => {
 
     const events = new EventPubSub();
 
+    
+
     function resetNodeState(ch) {
         if (lastReset + 100 > Date.now()) {
             return;
@@ -23,7 +25,7 @@ module.exports = RED => {
 
         const ch = new ConnectionHelper(socket, node);
 
-        ch.on(node.path, data => {
+        ch.socket.on(node.path, data => {
             const msg = { payload: data };
             node.send(msg);
         });
