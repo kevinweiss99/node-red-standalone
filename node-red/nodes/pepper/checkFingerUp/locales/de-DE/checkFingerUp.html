@@ -1,13 +1,11 @@
 <script type="text/markdown" data-help-name="Show text">
-Zeigt den angegebenen Text auf dem Tablet des Roboters an.
+Bei eingehendem Signal überprüft der Node ob jemand sich meldet (Zeigerfinger zeigt nach oben bzw. ganze Hand),
+und gibt true oder false zurück.
 
 ### Eingänge
-: payload (string) :  Anzeigetext
+: Jegliches signal zum Starten der Überprüfung
 
-### Einstellungen
-: Tablet text (string) : Anzeigetext `(priorisiert)`
-
-### Details
-Der eingegebene Text im Einstellungsfenster wird priorisiert verwendet. Soll die Ausgabe der vorherigen
-Node auf dem Tablet angezeigt werden, muss das Textfeld in den Einstellungen leer sein.
+### <Output>
+: Json object finger_up:true/false
+</Output>
 </script>
