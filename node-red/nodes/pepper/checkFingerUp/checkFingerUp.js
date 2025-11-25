@@ -11,7 +11,6 @@ module.exports = RED => {
         if (lastReset + 100 > Date.now()) {
             return;
         }
-
         lastReset = Date.now();
         ch.emit(null, "/robot/camera/finger_up");
     }
@@ -19,8 +18,7 @@ module.exports = RED => {
     function CheckFingerUp(config) {
         RED.nodes.createNode(this, config);
         const node = this;
-        node.url = "http://172.30.36.198:5001/robot/camera/finger_up"; // adjust URL
-
+        node.url = "http://172.30.36.198:5001/robot/camera/finger_up";
         node.on("input", msg => {
             http.get(node.url, res => {
                 let data = "";
