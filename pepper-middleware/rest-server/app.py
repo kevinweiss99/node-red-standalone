@@ -49,7 +49,7 @@ try:
     from package.endpoints.robot.temperature import *
     from package.endpoints.robot.touch import *
     from package.endpoints.robot.tts import *
-   # from package.endpoints.robot.detect_raised_arms import *
+    from package.endpoints.robot.detect_raised_arms import *
 except Exception as e:
     logger.critical(traceback.format_exc())
     logger.critical("Exiting application due to unhandled exception")
