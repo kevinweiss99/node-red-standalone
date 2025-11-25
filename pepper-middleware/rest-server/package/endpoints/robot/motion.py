@@ -60,6 +60,8 @@ def set_head_yaw(angle = None):
 
     return Response(status=200)
 
+#---------------------------
+
 @socketio.on("/robot/motion/arm/fingerpoint")
 @app.route("/robot/motion/arm/fingerpoint", methods=["POST"])
 @log("/robot/motion/arm/fingerpoint")
@@ -75,6 +77,7 @@ def arm_fingerpoint(hand=None):
             motion.setAngles("LShoulderPitch", -0.3, 0.2)
             motion.setAngles("LElbowRoll", -1.0, 0.2)
 
+        logger.debug("FingerPoint gesture executed for " + hand)
         socketio_wrapper("/motion/arm/fingerpoint/finished")
         return Response(status=200)
     except Exception as e:
@@ -96,11 +99,14 @@ def arm_thumbup(hand=None):
             motion.setAngles("LShoulderPitch", -0.4, 0.2)
             motion.setAngles("LElbowRoll", -0.5, 0.2)
 
+        logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
         return Response(status=200)
     except Exception as e:
         logger.error(e)
         return Response(str(e), status=500)
+    
+#---------------------------
     
 @socketio.on("/robot/motion/hand/open")
 @app.route("/robot/motion/hand/open", methods=["POST"])
