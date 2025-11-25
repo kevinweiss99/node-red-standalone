@@ -1,0 +1,14 @@
+{
+    "ArmGesture": {
+        "movement": "Bewegung",
+        "hand": "Hand",
+        "movements": {
+            "fingerpoint": "Zeigen mit dem Finger",
+            "thumbup": "Daumen hoch"
+        },
+        "hands": {
+            "right": "Rechte Hand",
+            "left": "Linke Hand"
+        }
+    }
+}

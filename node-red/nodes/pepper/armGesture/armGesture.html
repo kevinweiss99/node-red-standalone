@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    RED.nodes.registerType("ArmGesture", {
+        category: "Pepper",
+        color: "#FF9966",
+        defaults: {
+            movement: { value: "FingerPoint" },
+            hand: { value: "Right" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-hand-point-up",
+        label: function () { return "ArmGesture"; },
+        oneditprepare: function () {
+            const node = this;
+            $("#node-input-movement").typedInput({
+                types: [{ value: "movement", options: [
+                    { value: "FingerPoint", label: "Finger Point" },
+                    { value: "ThumbUp", label: "Thumb Up" }
+                ]}]
+            });
+            $("#node-input-hand").typedInput({
+                types: [{ value: "hand", options: [
+                    { value: "Right", label: "Right Hand" },
+                    { value: "Left", label: "Left Hand" }
+                ]}]
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ArmGesture">
+    <div class="form-row">
+        <label for="node-input-movement"><i class="fa fa-hand-pointer-o"></i> Movement:</label>
+        <input type="text" id="node-input-movement">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hand"><i class="fa fa-hand-paper-o"></i> Hand:</label>
+        <input type="text" id="node-input-hand">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="ArmGesture">
+    <p>Moves Pepper's arm to perform a pointing or thumb-up gesture with the chosen hand.</p>
+</script>

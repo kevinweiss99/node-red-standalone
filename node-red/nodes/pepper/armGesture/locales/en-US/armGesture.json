@@ -1,0 +1,14 @@
+{
+    "ArmGesture": {
+        "movement": "Movement",
+        "hand": "Hand",
+        "movements": {
+            "fingerpoint": "Finger Point",
+            "thumbup": "Thumb Up"
+        },
+        "hands": {
+            "right": "Right Hand",
+            "left": "Left Hand"
+        }
+    }
+}
