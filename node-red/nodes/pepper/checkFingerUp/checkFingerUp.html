@@ -1,13 +1,13 @@
 <script type="text/javascript">
     RED.nodes.registerType("CheckForFingerUp", {
         category: "Pepper",
-        color: "#C0C0C0",
+        color: "#34EBE8",
         defaults: {
             text: { value: "" }
         },
         inputs: 1,
         outputs: 1,
-        icon: "font-awesome/fa-font",
+        icon: "font-awesome/fa-hand-pointer-o",
         label: () => {
             return this.name;
         },
@@ -26,7 +26,6 @@
         },
         oneditsave: function () {
             const node = this;
-
             node.text = node.editor.getValue();
             node.editor.destroy();
             delete node.editor;
