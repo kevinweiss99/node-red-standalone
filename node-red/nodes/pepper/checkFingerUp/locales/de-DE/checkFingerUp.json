@@ -1,5 +1,6 @@
 {
-    "Show text": {
-        "connectionError": "Verbindungsfehler"
+    "IsFingerUp": {
+        "connectionError": "Verbindungsfehler",
+        "finger_up": "False"
     }
 }

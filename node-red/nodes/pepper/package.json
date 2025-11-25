@@ -9,6 +9,7 @@
             "chatbot": "chatbot/chatbot.js",
             "ChatGPT-Ask": "ChatGPT-Ask/ChatGPT-Ask.js",
             "ChatGPT-NewSession": "ChatGPT-NewSession/ChatGPT-NewSession.js",
+            "checkFingerUp": "checkFingerUp/checkFingerUp.js",
             "clearTablet": "clearTablet/clearTablet.js",
             "database": "database/database.js",
             "databaseConfig": "databaseConfig/databaseConfig.js",

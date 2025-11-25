@@ -18,39 +18,24 @@ module.exports = RED => {
     function CheckFingerUp(config) {
         RED.nodes.createNode(this, config);
         const node = this;
+
         node.path = "/robot/camera/finger_up";
 
         const ch = new ConnectionHelper(socket, node);
 
+        ch.on(node.path, data => {
+            const msg = { payload: data };
+            node.send(msg);
+        });
+
         node.on("input", msg => {
-            // injected value
-            let text = msg.payload;
-
-            // use injected value from payload
-            if (typeof msg.payload == "object" && "value" in msg.payload) {
-                text = msg.payload.value;
-            }
-
-            // if node property input is not empty, use user input instead
-            if (config.text !== "") {
-                text = config.text;
-            }
-
-            if (text == undefined) {
-                text = "";
-            }
-
-            text = text.trim().split("\r\n");
-            ch.emit(text);
-
-            if (socket.connected) {
-                node.send(msg);
-            }
+            ch.emit(null, node.path);
         });
 
         events.subscribe(EventPubSub.RESET_NODE_STATE, () => {
             resetNodeState(ch);
         });
     }
+
     RED.nodes.registerType("CheckForFingerUp", CheckFingerUp);
 }
