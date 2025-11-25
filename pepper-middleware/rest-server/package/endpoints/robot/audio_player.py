@@ -92,7 +92,7 @@ def play_webstream():
         return Response("Missing 'url' query parameter", status=400)
 
     try:
-        audio_player.playWebStream(url)
+        audio_player.playWebStream(url, 1.0, 0.0)
     except Exception as e:
         return Response(str(e), status=500)
     return Response(status=200)
@@ -109,7 +109,7 @@ def play_webstream_async():
         return Response("Missing 'url' query parameter", status=400)
 
     try:
-        audio_player.playWebStream(url, _async=True)
+        audio_player.playWebStream(url, 1.0, 0.0, _async=True)
     except Exception as e:
         return Response(str(e), status=500)
     return Response(status=200)
