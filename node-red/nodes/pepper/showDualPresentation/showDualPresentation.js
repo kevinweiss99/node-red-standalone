@@ -21,7 +21,7 @@ module.exports = RED => {
     function ShowImageNode(config) {
         RED.nodes.createNode(this, config);
         const node = this;
-        node.path = "/robot/tablet/image";
+        node.path = "/robot/presentation/show_slide";
 
         const ch = new ConnectionHelper(socket, node);
 
@@ -30,12 +30,6 @@ module.exports = RED => {
 
             if (socket.connected) {
                 node.send(msg);
-            }
-        });
-
-        ch.socket.on("/robot/tablet/image/error", url => {
-            if (url === config.url) {
-                node.status({ fill: "red", shape: "dot", text: node.type + ".cantLoadImage" });
             }
         });
 
@@ -67,5 +61,5 @@ module.exports = RED => {
             }
         });
     }
-    RED.nodes.registerType("Show image", ShowImageNode);
+    RED.nodes.registerType("Show Dual Presentation", ShowImageNode);
 }
