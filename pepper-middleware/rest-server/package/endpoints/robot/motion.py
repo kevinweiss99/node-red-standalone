@@ -69,10 +69,18 @@ def arm_fingerpoint(hand=None):
         if hand is None:
             hand = request.get_json(force=True, silent=True)["hand"]
 
-        # Bewegung ausführen
+        head_yaw = motion.getAngles("HeadYaw", True)[0]
+        motion.setAngles("TorsoYaw", head_yaw, 0.2)
+
+        if hand == "RHand":
+            motion.setAngles("RHand", 1.0, 0.2)
+        elif hand == "LHand":
+            motion.setAngles("LHand", 1.0, 0.2)
+
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.3, 0.2)
             motion.setAngles("RElbowRoll", 1.0, 0.2)
+
         elif hand == "LHand":
             motion.setAngles("LShoulderPitch", -0.3, 0.2)
             motion.setAngles("LElbowRoll", -1.0, 0.2)
@@ -80,9 +88,9 @@ def arm_fingerpoint(hand=None):
         logger.debug("FingerPoint gesture executed for " + hand)
         socketio_wrapper("/motion/arm/fingerpoint/finished")
 
-        # Nach kurzer Pause zurücksetzen
         fingerpoint_finished(hand)
         return Response(status=200)
+
     except Exception as e:
         logger.error(e)
         return Response(str(e), status=500)
@@ -95,20 +103,30 @@ def arm_thumbup(hand=None):
         if hand is None:
             hand = request.get_json(force=True, silent=True)["hand"]
 
-        # Bewegung ausführen
+        head_yaw = motion.getAngles("HeadYaw", True)[0]
+        motion.setAngles("TorsoYaw", head_yaw, 0.2)
+
+        if hand == "RHand":
+            motion.setAngles("RHand", 1.0, 0.2)  # 1.0 = offen
+        elif hand == "LHand":
+            motion.setAngles("LHand", 1.0, 0.2)
+
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.4, 0.2)
             motion.setAngles("RElbowRoll", 0.5, 0.2)
+            time.sleep(1.5)
+
         elif hand == "LHand":
             motion.setAngles("LShoulderPitch", -0.4, 0.2)
             motion.setAngles("LElbowRoll", -0.5, 0.2)
+            time.sleep(1.5)
 
         logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
 
-        # Nach kurzer Pause zurücksetzen
         thumbup_finished(hand)
         return Response(status=200)
+
     except Exception as e:
         logger.error(e)
         return Response(str(e), status=500)
