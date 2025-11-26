@@ -168,21 +168,21 @@ def fingerpoint_finished(hand):
     logger.debug("FingerPoint finished – resetting arm for " + hand)
     time.sleep(1.5)
     if hand == "RHand":
-        motion.setAngles("RShoulderPitch", 1.2, 0.5)
-        motion.setAngles("RElbowRoll", 0.0, 0.5)
+        motion.setAngles("RShoulderPitch", 1.2, 0.2)
+        motion.setAngles("RElbowRoll", 0.0, 0.2)
     elif hand == "LHand":
-        motion.setAngles("LShoulderPitch", 1.2, 0.5)
-        motion.setAngles("LElbowRoll", 0.0, 0.5)
+        motion.setAngles("LShoulderPitch", 1.2, 0.2)
+        motion.setAngles("LElbowRoll", 0.0, 0.2)
 
 def thumbup_finished(hand):
     logger.debug("ThumbUp finished – resetting arm for " + hand)
     time.sleep(1.5)
     if hand == "RHand":
-        motion.setAngles("RShoulderPitch", 1.2, 0.5)
-        motion.setAngles("RElbowRoll", 0.0, 0.5)
+        motion.setAngles("RShoulderPitch", 1.2, 0.2)
+        motion.setAngles("RElbowRoll", 0.0, 0.2)
     elif hand == "LHand":
-        motion.setAngles("LShoulderPitch", 1.2, 0.5)
-        motion.setAngles("LElbowRoll", 0.0, 0.5)
+        motion.setAngles("LShoulderPitch", 1.2, 0.2)
+        motion.setAngles("LElbowRoll", 0.0, 0.2)
 
 # motion.setOrthogonalSecurityDistance(0.2)
 # motion.setTangentialSecurityDistance(0.05)
