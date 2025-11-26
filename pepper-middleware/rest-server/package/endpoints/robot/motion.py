@@ -70,7 +70,7 @@ def arm_fingerpoint(hand=None):
             hand = request.get_json(force=True, silent=True)["hand"]
 
         head_yaw = motion.getAngles("HeadYaw", True)[0]
-        motion.setAngles("TorsoYaw", head_yaw, 0.2)
+        motion.moveTo(0, 0, head_yaw)
 
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.3, 0.2)
@@ -80,7 +80,7 @@ def arm_fingerpoint(hand=None):
         elif hand == "LHand":
             motion.setAngles("LShoulderPitch", -0.3, 0.2)
             motion.setAngles("LElbowRoll", -1.0, 0.2)
-            motion.setAngles("RHand", 1.0, 0.2)
+            motion.setAngles("LHand", 1.0, 0.2)
 
         logger.debug("FingerPoint gesture executed for " + hand)
         socketio_wrapper("/motion/arm/fingerpoint/finished")
@@ -100,7 +100,7 @@ def arm_thumbup(hand=None):
             hand = request.get_json(force=True, silent=True)["hand"]
 
         head_yaw = motion.getAngles("HeadYaw", True)[0]
-        motion.setAngles("TorsoYaw", head_yaw, 0.2)
+        motion.moveTo(0, 0, head_yaw)
 
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.4, 0.2)
@@ -110,7 +110,7 @@ def arm_thumbup(hand=None):
         elif hand == "LHand":
             motion.setAngles("LShoulderPitch", -0.4, 0.2)
             motion.setAngles("LElbowRoll", -0.5, 0.2)
-            motion.setAngles("RHand", 1.0, 0.2)
+            motion.setAngles("LHand", 1.0, 0.2)
 
         logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
