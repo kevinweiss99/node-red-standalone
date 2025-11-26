@@ -72,7 +72,6 @@ def arm_fingerpoint(hand=None):
         head_yaw = motion.getAngles("HeadYaw", True)[0]
         motion.setAngles("TorsoYaw", head_yaw, 0.2)
 
-        # Bewegung ausführen
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.3, 0.2)
             motion.setAngles("RElbowRoll", 1.0, 0.2)
@@ -86,7 +85,6 @@ def arm_fingerpoint(hand=None):
         logger.debug("FingerPoint gesture executed for " + hand)
         socketio_wrapper("/motion/arm/fingerpoint/finished")
 
-        # Nach kurzer Pause zurücksetzen
         fingerpoint_finished(hand)
         return Response(status=200)
     except Exception as e:
@@ -104,7 +102,6 @@ def arm_thumbup(hand=None):
         head_yaw = motion.getAngles("HeadYaw", True)[0]
         motion.setAngles("TorsoYaw", head_yaw, 0.2)
 
-        # Bewegung ausführen
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.4, 0.2)
             motion.setAngles("RElbowRoll", 0.5, 0.2)
@@ -118,7 +115,6 @@ def arm_thumbup(hand=None):
         logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
 
-        # Nach kurzer Pause zurücksetzen
         thumbup_finished(hand)
         return Response(status=200)
     except Exception as e:
