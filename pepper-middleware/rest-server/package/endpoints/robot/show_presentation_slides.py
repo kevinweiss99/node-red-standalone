@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 from flask import request, Response
 from flask_socketio import SocketIO, emit
 
-@socketio.on("/robot/presentation/show_slide")
 @app.route("/robot/presentation/show_slide", methods=["POST"])
 @log("/robot/presentation/show_slide")
 def post_slide_browser(url=None):
@@ -32,8 +31,7 @@ def post_slide_browser(url=None):
             logger.warning(f"Failed to retrieve {url}..")
             return Response(status=400)
 
-        socketio.emit("/robot/presentation/current_slide", {"url": url})
-        return Response(img_response.content, mimetype=img_response.headers.get('Content-Type', 'image/jpeg'))
+        socketio.emit("/robot/presentation/show_slide", {"url": url})
+        return Response(img_response.content, mimetype=img_response.headers.get('Content-Type', 'image/jpeg'),status=200)
     except Exception as e:
         print(f"e: {e}")
-
