@@ -9,17 +9,18 @@
     </style>
 </head>
 <body>
-    <h1>Live Content Feed</h1>
-    <div id="content">Waiting for content...</div>
+    <h1>Live Slide Viewer</h1>
+    <img id="slide" src="" alt="Waiting for slide...">
 
     <script>
+        // Connect to your Socket.IO server (with namespace if needed)
         const socket = io("http://172.30.36.198:5001");
-        socket.on('connect', () => {
-            console.log('Connected to server');
-        });
 
+        // Listen for slide URLs
         socket.on("/robot/presentation/show_slide", data => {
-            document.getElementById('content').innerText = data.content;
+            console.log("Received slide URL:", data.url);
+            const slide = document.getElementById("slide");
+            slide.src = data.url;  // Update image
         });
     </script>
 </body>
