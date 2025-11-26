@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Live Content</title>
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 50px; }
         #content { font-size: 2em; color: #333; }
@@ -19,7 +18,7 @@
             console.log('Connected to server');
         });
 
-        socket.on('new_content', data => {
+        socket.on("/robot/presentation/show_slide", data => {
             document.getElementById('content').innerText = data.content;
         });
     </script>
