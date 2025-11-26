@@ -1,6 +1,6 @@
 import math
 import logging
-
+import time
 from flask import request, Response
 
 from ...config import DEFAULT_BASIC_AWARENESS_TRACKING
@@ -69,6 +69,7 @@ def arm_fingerpoint(hand=None):
         if hand is None:
             hand = request.get_json(force=True, silent=True)["hand"]
 
+        # Bewegung ausführen
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.3, 0.2)
             motion.setAngles("RElbowRoll", 1.0, 0.2)
@@ -78,6 +79,9 @@ def arm_fingerpoint(hand=None):
 
         logger.debug("FingerPoint gesture executed for " + hand)
         socketio_wrapper("/motion/arm/fingerpoint/finished")
+
+        # Nach kurzer Pause zurücksetzen
+        fingerpoint_finished(hand)
         return Response(status=200)
     except Exception as e:
         logger.error(e)
@@ -91,6 +95,7 @@ def arm_thumbup(hand=None):
         if hand is None:
             hand = request.get_json(force=True, silent=True)["hand"]
 
+        # Bewegung ausführen
         if hand == "RHand":
             motion.setAngles("RShoulderPitch", -0.4, 0.2)
             motion.setAngles("RElbowRoll", 0.5, 0.2)
@@ -100,6 +105,9 @@ def arm_thumbup(hand=None):
 
         logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
+
+        # Nach kurzer Pause zurücksetzen
+        thumbup_finished(hand)
         return Response(status=200)
     except Exception as e:
         logger.error(e)
@@ -155,6 +163,26 @@ def wake_up_finished(wake_up_future):
 
     logger.debug("Wake up position reached")
     socketio_wrapper("/motion/wakeup/finished")
+
+def fingerpoint_finished(hand):
+    logger.debug("FingerPoint finished – resetting arm for " + hand)
+    time.sleep(1.5)
+    if hand == "RHand":
+        motion.setAngles("RShoulderPitch", 1.2, 0.15)
+        motion.setAngles("RElbowRoll", 0.0, 0.15)
+    elif hand == "LHand":
+        motion.setAngles("LShoulderPitch", 1.2, 0.15)
+        motion.setAngles("LElbowRoll", 0.0, 0.15)
+
+def thumbup_finished(hand):
+    logger.debug("ThumbUp finished – resetting arm for " + hand)
+    time.sleep(1.5)
+    if hand == "RHand":
+        motion.setAngles("RShoulderPitch", 1.2, 0.15)
+        motion.setAngles("RElbowRoll", 0.0, 0.15)
+    elif hand == "LHand":
+        motion.setAngles("LShoulderPitch", 1.2, 0.15)
+        motion.setAngles("LElbowRoll", 0.0, 0.15)
 
 # motion.setOrthogonalSecurityDistance(0.2)
 # motion.setTangentialSecurityDistance(0.05)
