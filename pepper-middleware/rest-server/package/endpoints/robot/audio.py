@@ -36,3 +36,20 @@ def _get_general_volume():
         output_volume = "-"
 
     return output_volume
+
+@app.route("/robot/output/setBuffer", methods=["POST"])
+@log("/robot/output/setBuffer")
+def setBuffer():
+    """
+    Expects 48 kHz PCM 16-bit stereo interleaved audio data (<16 KB) as raw body.
+    nbOfFrames is passed as query parameter.
+    """
+    nbOfFrames = int(request.args["nbOfFrames"])
+    buffer = request.get_data()  # raw bytes from request body
+
+    # Optionally: sanity check the size
+    if len(buffer) > 16384:
+        return Response("Buffer too large", status=400)
+
+    audio.sendRemoteBufferToOutput(nbOfFrames, buffer, _async=True)
+    return Response("", status=200)
