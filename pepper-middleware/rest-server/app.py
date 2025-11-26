@@ -51,6 +51,7 @@ try:
     from package.endpoints.robot.tts import *
     from package.endpoints.robot.detect_raised_arms import *
     from package.endpoints.robot.audio_player import *
+    from package.endpoints.robot.show_presentation_slides import *
 except Exception as e:
     logger.critical(traceback.format_exc())
     logger.critical("Exiting application due to unhandled exception")
