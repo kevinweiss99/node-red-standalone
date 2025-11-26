@@ -26,10 +26,15 @@ def post_slide_browser(url=None):
         if not tablet.showImage(url, _async=True):
             logger.warning(f"Website {url} is not reachable.")
 
-        img_response = requests.get(url, stream=True)
+        headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/118.0.5993.117 Safari/537.36"
+        }
+        img_response = requests.get(url, headers=headers, stream=True)
         if not img_response:
             logger.warning(f"Failed to retrieve {url}..")
-            return Response(status=400)
+            return Response("Schade schokolade",status=400)
 
         socketio.emit("/robot/presentation/show_slide", {"url": url})
         return Response(img_response.content, mimetype=img_response.headers.get('Content-Type', 'image/jpeg'),status=200)

@@ -13,10 +13,7 @@
     <img id="slide" src="" alt="Waiting for slide...">
 
     <script>
-        // Connect to your Socket.IO server (with namespace if needed)
         const socket = io("http://172.30.36.198:5001");
-
-        // Listen for slide URLs
         socket.on("/robot/presentation/show_slide", data => {
             console.log("Received slide URL:", data.url);
             const slide = document.getElementById("slide");
