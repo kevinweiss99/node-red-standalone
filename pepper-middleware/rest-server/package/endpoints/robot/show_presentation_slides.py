@@ -11,20 +11,14 @@ from ...decorator import log
 
 logger = logging.getLogger(__name__)
 
-@socketio.on("/robot/presentation/slide")
-@app.route("/robot/presentation/slide")
+@socketio.on("/robot/presentation/show_slide")
+@app.route("/robot/presentation/show_slide")
 @log("/robot/presentation/slide")
-def post_slide_online(url=None):
+def post_slide_browser(url=None):
     if not url:
         url = request.get_json(force=True, silent=True)["url"]
-    return Response(status=200)
-
-@socketio.on("/robot/presentation/slide")
-@app.route("/robot/presentation/slide", methods=["POST"])
-@log("/robot/presentation/slide")
-def post_slide_online(url=None):
-    if not url:
-        url = request.get_json(force=True, silent=True)["url"]
+    if not tablet.showImage(url, _async=True):
+        logger.warning("Website {} is not reachable.".format(url))
     
     return Response(status=200)
 
