@@ -1,6 +1,6 @@
 module.exports = RED => {
-    const http = require("http");
 
+    const http = require("http");
   function ArmGesture(config) {
         RED.nodes.createNode(this, config);
         const node = this;
@@ -35,6 +35,5 @@ module.exports = RED => {
             req.end();
         });
     }
-
     RED.nodes.registerType("ArmGesture", ArmGesture);
 }
