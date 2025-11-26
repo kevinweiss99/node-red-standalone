@@ -32,7 +32,7 @@ MODEL = "models/gemini-2.5-flash-native-audio-preview-09-2025"
 
 client = genai.Client(
     http_options={"api_version": "v1beta"},
-    api_key="AIzaSyAnyo1qeq8SUUynN5ZE2oUL4wgb2BdKpfk",  # replace / env var in real code
+    api_key="secret",  # replace / env var in real code or call endpoint below
 )
 
 CONFIG = types.LiveConnectConfig(
@@ -295,5 +295,43 @@ def speak_to_gemini():
     except Exception:
         logger.exception("Error enqueuing audio for Gemini")
         return Response("Error sending audio to Gemini", status=500)
+
+    return Response(status=200)
+
+@socketio.on("/robot/gemini/set_api_key")
+@app.route("/robot/gemini/set_api_key", methods=["POST"])
+@log("/robot/gemini/set_api_key")
+def set_gemini_api_key():
+    """
+    Updates the Gemini API key and reinitializes the client.
+
+    Body JSON: {"api_key": "NEW_KEY"}
+    """
+    global client, loop_thread, main, loop
+
+    data = request.get_json(silent=True) or {}
+    new_key = data.get("api_key")
+
+    if not new_key:
+        return Response("Missing 'api_key' in JSON", status=400)
+
+    with session_lock:
+        # Prevent accidental change while a model session is active
+        if loop_thread is not None and loop_thread.is_alive():
+            logger.warning("Attempt to change API key while session active.")
+            return Response(
+                "Cannot change API key while Gemini session is running.",
+                status=409,
+            )
+
+        try:
+            client = genai.Client(
+                http_options={"api_version": "v1beta"},
+                api_key=new_key,
+            )
+            logger.info("Gemini API key updated.")
+        except Exception:
+            logger.exception("Error updating Gemini client.")
+            return Response("Failed to update Gemini API key", status=500)
 
     return Response(status=200)
