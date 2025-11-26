@@ -5,25 +5,26 @@ module.exports = RED => {
         RED.nodes.createNode(this, config);
         const node = this;
         node.url = "http://172.30.36.198:5001/robot/motion/arm/fingerpoint";
-
+        node.movement = config.movement;
+        node.hand = config.hand;
         node.on("input", msg => {
-            const data = JSON.stringify(msg.payload);
-            const url = new URL(node.url);
-
+            json_input = {"hand":node.hand}
+            const data = JSON.stringify(json_input);
             const req = http.request({
-                hostname: url.hostname,
-                port: url.port,
-                path: url.pathname,
+                hostname: "172.30.36.198",
+                port: "5001",
+                path: `/robot/motion/arm/${node.movement}`,
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Content-Length": Buffer.byteLength(data)
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(data)
                 }
             }, res => {
-                let body = "";
+                let body = "exception";
                 res.on("data", chunk => body += chunk);
                 res.on("end", () => {
-                    try { msg.payload = JSON.parse(body); } 
+                    try { msg.payload = data
+                        } 
                     catch { msg.payload = body; }
                     node.send(msg);
                 });
