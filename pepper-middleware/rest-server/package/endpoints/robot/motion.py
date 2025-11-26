@@ -61,8 +61,6 @@ def set_head_yaw(angle = None):
 
     return Response(status=200)
 
-#---------------------------
-
 @socketio.on("/robot/motion/arm/fingerpoint")
 @app.route("/robot/motion/arm/fingerpoint", methods=["POST"])
 @log("/robot/motion/arm/fingerpoint")
@@ -106,8 +104,6 @@ def arm_thumbup(hand=None):
     except Exception as e:
         logger.error(e)
         return Response(str(e), status=500)
-    
-#---------------------------
     
 @socketio.on("/robot/motion/hand/open")
 @app.route("/robot/motion/hand/open", methods=["POST"])
