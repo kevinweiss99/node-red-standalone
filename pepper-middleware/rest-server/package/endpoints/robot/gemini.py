@@ -8,6 +8,7 @@ from ...decorator import log
 
 import asyncio
 import traceback
+import concurrent.futures
 
 import requests
 import numpy as np
@@ -62,7 +63,6 @@ loop_thread = None   # type: threading.Thread | None
 session_lock = threading.Lock()
 
 
-
 def gemini_mono24k_to_pepper_stereo48k(mono_24k_pcm: bytes) -> bytes:
     """Convert 24 kHz mono int16 PCM → 48 kHz stereo interleaved int16 PCM."""
     # 1. Decode to numpy int16 array (mono)
@@ -80,7 +80,7 @@ def gemini_mono24k_to_pepper_stereo48k(mono_24k_pcm: bytes) -> bytes:
 
 def send_buffer_to_pepper(stereo_48k_pcm: bytes):
     """Send a 48 kHz stereo interleaved PCM buffer to Pepper in <=16 KB chunks."""
-    logger.debug("sending buffer to pepper of size %d", len(stereo_48k_pcm))
+    logger.warning("sending buffer to pepper of size %d", len(stereo_48k_pcm))
 
     # Each stereo frame is 4 bytes (2 channels × 2 bytes)
     for offset in range(0, len(stereo_48k_pcm), MAX_PEPPER_BUFFER_BYTES):
@@ -91,14 +91,13 @@ def send_buffer_to_pepper(stereo_48k_pcm: bytes):
         if nb_frames <= 0:
             continue
 
-        logger.info("sending audio buffer to pepper of size %d", nb_frames)
+        logger.warning("sending audio buffer to pepper of size %d", nb_frames)
         audio.sendRemoteBufferToOutput(nb_frames, chunk, _async=True)
 
 
-
-
-
-# handles Gemini Live session and audio I/O
+# -------------------------------------------------------------------------
+# AudioLoop – Gemini Live session and audio I/O
+# -------------------------------------------------------------------------
 class AudioLoop:
     def __init__(self):
         self.audio_in_queue: asyncio.Queue[bytes] | None = None
@@ -113,7 +112,8 @@ class AudioLoop:
         while not self.stop_event.is_set():
             msg = await self.out_queue.get()
             try:
-                await self.session.send(input=msg)  # msg is {"data": bytes, "mime_type": "audio/pcm"}
+                # msg is {"data": bytes, "mime_type": "audio/pcm"}
+                await self.session.send(input=msg)
             except Exception:
                 logger.exception("Error sending audio chunk to Gemini")
                 break
@@ -130,7 +130,7 @@ class AudioLoop:
                     continue
                 if text := response.text:
                     # Optional: log transcripts
-                    logger.info("Gemini text: %s", text)
+                    logger.warning("Gemini text: %s", text)
 
             # If you interrupt the model, it sends a turn_complete.
             # Clear any queued audio that's no longer relevant.
@@ -158,7 +158,7 @@ class AudioLoop:
         try:
             async with client.aio.live.connect(model=MODEL, config=CONFIG) as session:
                 self.session = session
-                logger.info("Gemini Live session started")
+                logger.warning("Gemini Live session started")
 
                 async with asyncio.TaskGroup() as tg:
                     tg.create_task(self.send_realtime())
@@ -167,13 +167,13 @@ class AudioLoop:
 
                     # Wait until stop_event is set
                     await self.stop_event.wait()
-                    logger.info("Stop event set, cancelling tasks")
+                    logger.warning("Stop event set, cancelling tasks")
                     tg.cancel()
         except Exception as e:
             logger.exception("Error in AudioLoop.run: %s", e)
         finally:
             self.session = None
-            logger.info("Gemini Live session ended")
+            logger.warning("Gemini Live session ended")
 
     async def stop(self):
         """Signal the loop to stop."""
@@ -182,19 +182,16 @@ class AudioLoop:
     async def enqueue_audio(self, pcm_bytes: bytes):
         """Coroutine: push incoming PCM to out_queue for Gemini."""
         if self.out_queue is None:
+            logger.warning("enqueue_audio called but out_queue is None")
             return
 
-        try:
-            self.out_queue.put_nowait({"data": pcm_bytes, "mime_type": "audio/pcm"})
-        except asyncio.QueueFull:
-            logger.warning("enqueue_audio: queue full, dropping frame")
-            return
-        except Exception as e:
-            logger.exception("Unexpected error in enqueue_audio")
+        # Match the working version: block until there is space
+        await self.out_queue.put({"data": pcm_bytes, "mime_type": "audio/pcm"})
 
 
-
+# -------------------------------------------------------------------------
 # Background thread / loop management
+# -------------------------------------------------------------------------
 def _run_audio_loop():
     """Target function for background thread."""
     global main, loop
@@ -208,13 +205,13 @@ def _run_audio_loop():
         loop.close()
         with session_lock:
             # mark as fully stopped
-            logger.info("Audio loop thread exiting")
+            logger.warning("Audio loop thread exiting")
             # main & loop will be set to None in stop handler after join
 
 
-
-
-
+# -------------------------------------------------------------------------
+# Routes / SocketIO handlers
+# -------------------------------------------------------------------------
 @socketio.on("/robot/gemini/start")
 @app.route("/robot/gemini/start", methods=["POST"])
 @log("/robot/gemini/start")
@@ -224,7 +221,7 @@ def start_gemini_session():
 
     with session_lock:
         if loop_thread is not None and loop_thread.is_alive():
-            logger.info("Gemini session already running")
+            logger.warning("Gemini session already running")
             return Response(status=200)
 
         # Reset in case anything stale is hanging around
@@ -233,7 +230,7 @@ def start_gemini_session():
 
         loop_thread = threading.Thread(target=_run_audio_loop, daemon=True)
         loop_thread.start()
-        logger.info("Started Gemini audio loop thread")
+        logger.warning("Started Gemini audio loop thread")
 
     return Response(status=200)
 
@@ -247,7 +244,7 @@ def stop_gemini_session():
 
     with session_lock:
         if loop is None or main is None:
-            logger.info("No active Gemini session to stop")
+            logger.warning("No active Gemini session to stop")
             return Response(status=200)
 
         # Ask the AudioLoop to stop
@@ -262,7 +259,7 @@ def stop_gemini_session():
         loop = None
         loop_thread = None
 
-    logger.info("Gemini session stopped and reset")
+    logger.warning("Gemini session stopped and reset")
     return Response(status=200)
 
 
@@ -278,7 +275,7 @@ def speak_to_gemini():
 
     # Only accept input if a session is active
     with session_lock:
-        if main is None or loop is None or loop.is_closed():
+        if main is None or loop is None:
             logger.warning("speak_to_gemini called but no active Gemini session")
             return Response("Gemini session not started", status=400)
 
@@ -286,18 +283,20 @@ def speak_to_gemini():
     if not pcm_bytes:
         return Response("Empty audio payload", status=400)
 
-    # Enqueue audio for Gemini on its event loop
     try:
         # schedule on async loop
         fut = asyncio.run_coroutine_threadsafe(main.enqueue_audio(pcm_bytes), loop)
 
         # get the real exception from inside the coroutine
-        fut.result(timeout=1.0)
+        fut.result(timeout=2.0)
 
+    except concurrent.futures.TimeoutError:
+        logger.error("Error enqueuing audio for Gemini: timed out waiting for queue.put")
+        return Response("Timed out enqueuing audio", status=500)
     except Exception as e:
         logger.error("Error enqueuing audio for Gemini: %s", e)
         logger.error("Full exception:", exc_info=True)
-        return Response(f"Error sending audio to Gemini: {e}", status=500)
+        return Response("Error sending audio to Gemini", status=500)
 
     return Response(status=200)
 
@@ -333,7 +332,7 @@ def set_gemini_api_key():
                 http_options={"api_version": "v1beta"},
                 api_key=new_key,
             )
-            logger.info("Gemini API key updated.")
+            logger.warning("Gemini API key updated.")
         except Exception:
             logger.exception("Error updating Gemini client.")
             return Response("Failed to update Gemini API key", status=500)
