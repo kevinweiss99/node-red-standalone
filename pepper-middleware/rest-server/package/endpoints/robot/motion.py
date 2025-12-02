@@ -73,14 +73,14 @@ def arm_fingerpoint(hand=None):
         motion.moveTo(0, 0, head_yaw)
 
         if hand == "RHand":
-            motion.setAngles("RShoulderPitch", -0.5, 0.2)
+            motion.setAngles("RShoulderPitch", -0.3, 0.2)
             motion.setAngles("RElbowRoll", 0.5, 0.2)
             motion.setAngles("RHand", 1.0, 0.2)
 
         elif hand == "LHand":
             motion.setAngles("LShoulderPitch", -0.5, 0.2)
             motion.setAngles("LElbowRoll", 0,5, 0.2)
-            motion.setAngles("LHand", 1.0, 0.2)
+            motion.setAngles("LHand", 1.57, 0.2)
 
         logger.debug("FingerPoint gesture executed for " + hand)
         socketio_wrapper("/motion/arm/fingerpoint/finished")
@@ -110,11 +110,11 @@ def arm_thumbup(hand=None):
             motion.setAngles("RHand", 1.0, 0.2)           
 
         elif hand == "LHand":
-            motion.setAngles("LShoulderPitch", 0.5, 0.2)
-            motion.setAngles("LShoulderRoll", 0.3, 0.2)
-            motion.setAngles("LElbowYaw", -1.2, 0.2)
-            motion.setAngles("LElbowRoll", -0.4, 0.2)
-            motion.setAngles("LHand", 1.0, 0.2)
+            motion.setAngles("LShoulderPitch", 0.3, 0.3)
+            motion.setAngles("LShoulderRoll", 0.3, 0.3)
+            motion.setAngles("LElbowYaw", -1.2, 0.3)
+            motion.setAngles("LElbowRoll", -0.4, 0.3)
+            motion.setAngles("LHand", 1.0, 0.3)
 
         logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
