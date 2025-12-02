@@ -56,3 +56,29 @@ def setBuffer():
 
     audio.sendRemoteBufferToOutput(nbOfFrames, buffer, _async=True)
     return Response("", status=200)
+
+
+@app.route("/robot/output/setBufferWithConvert", methods=["POST"])
+@log("/robot/output/setBufferWithConvert")
+def setBufferWithConver():
+    """
+    Expects 48 kHz PCM 16-bit stereo interleaved audio data of any size as raw body.
+    """
+    stereo_48k_pcm = request.get_data()  # raw bytes from request body
+    frame_number = int(request.args["messageNumber"])
+
+    logger.warning("Received message number %s", frame_number)
+
+    # Each stereo frame is 4 bytes (2 channels × 2 bytes)
+    MAX_PEPPER_BUFFER_BYTES = 16384
+    for offset in range(0, len(stereo_48k_pcm), MAX_PEPPER_BUFFER_BYTES):
+        chunk = stereo_48k_pcm[offset:offset + MAX_PEPPER_BUFFER_BYTES]
+        if not chunk:
+            continue
+        nb_frames = len(chunk) // 4
+        if nb_frames <= 0:
+            continue
+        
+        audio.sendRemoteBufferToOutput(nb_frames, chunk, _async=True)
+    
+    return Response("", status=200)
