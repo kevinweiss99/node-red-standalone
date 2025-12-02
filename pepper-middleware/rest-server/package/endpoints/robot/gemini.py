@@ -2,7 +2,7 @@ from flask import request, Response
 import logging
 import threading
 
-from ...server import app, socketio
+from ...server import app
 from ...pepper.connection import audio
 from ...decorator import log
 
@@ -212,7 +212,6 @@ def _run_audio_loop():
 # -------------------------------------------------------------------------
 # Routes / SocketIO handlers
 # -------------------------------------------------------------------------
-@socketio.on("/robot/gemini/start")
 @app.route("/robot/gemini/start", methods=["POST"])
 @log("/robot/gemini/start")
 def start_gemini_session():
@@ -235,7 +234,6 @@ def start_gemini_session():
     return Response(status=200)
 
 
-@socketio.on("/robot/gemini/stop")
 @app.route("/robot/gemini/stop", methods=["POST"])
 @log("/robot/gemini/stop")
 def stop_gemini_session():
@@ -263,7 +261,6 @@ def stop_gemini_session():
     return Response(status=200)
 
 
-@socketio.on("/robot/gemini/speak")
 @app.route("/robot/gemini/speak", methods=["POST"])
 @log("/robot/gemini/speak")
 def speak_to_gemini():
@@ -301,7 +298,6 @@ def speak_to_gemini():
     return Response(status=200)
 
 
-@socketio.on("/robot/gemini/set_api_key")
 @app.route("/robot/gemini/set_api_key", methods=["POST"])
 @log("/robot/gemini/set_api_key")
 def set_gemini_api_key():
