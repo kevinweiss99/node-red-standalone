@@ -1,3 +1,4 @@
+import asyncio
 from flask import request, Response
 import logging
 
@@ -60,7 +61,7 @@ def setBuffer():
 
 @app.route("/robot/output/setBufferWithConvert", methods=["POST"])
 @log("/robot/output/setBufferWithConvert")
-def setBufferWithConver():
+async def setBufferWithConvert():
     """
     Expects 48 kHz PCM 16-bit stereo interleaved audio data of any size as raw body.
     """
@@ -79,6 +80,7 @@ def setBufferWithConver():
         if nb_frames <= 0:
             continue
         
+        await asyncio.sleep(0.08)
         audio.sendRemoteBufferToOutput(nb_frames, chunk, _async=True)
     
     return Response("", status=200)
