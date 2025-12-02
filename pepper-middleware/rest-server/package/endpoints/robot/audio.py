@@ -46,6 +46,9 @@ def setBuffer():
     """
     nbOfFrames = int(request.args["nbOfFrames"])
     buffer = request.get_data()  # raw bytes from request body
+    frame_number = int(request.args["messageNumber"])
+
+    logger.warning("Received message number ", frame_number)
 
     # Optionally: sanity check the size
     if len(buffer) > 16384:
