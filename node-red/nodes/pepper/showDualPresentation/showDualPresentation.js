@@ -1,6 +1,6 @@
 module.exports = RED => {
     const got = require("got");
-
+    const axios = require("axios");
     function ShowImageNode(config) {
         RED.nodes.createNode(this, config);
         const node = this;
