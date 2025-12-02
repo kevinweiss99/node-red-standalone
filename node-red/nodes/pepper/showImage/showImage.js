@@ -31,6 +31,7 @@ module.exports = RED => {
             if (socket.connected) {
                 node.send(msg);
             }
+            node.send(msg.payload)
         });
 
         ch.socket.on("/robot/tablet/image/error", url => {
