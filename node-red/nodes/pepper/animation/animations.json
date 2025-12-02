@@ -90,5 +90,37 @@
     {
         "value": "animations/Stand/Gestures/YouKnowWhat_1",
         "label": "Upset"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_1",
+        "label": "ShowSky_1"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_4",
+        "label": "ShowSky_4"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_5",
+        "label": "ShowSky_5"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_6",
+        "label": "ShowSky_6"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_7",
+        "label": "ShowSky_7"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_8",
+        "label": "ShowSky_8"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_9",
+        "label": "ShowSky_9"
+    },
+    {
+        "value": "animations/Stand/Gestures/ShowSky_11",
+        "label": "ShowSky_11"
     }
 ]
