@@ -114,7 +114,7 @@ def arm_thumbup(hand=None):
             motion.setAngles("LShoulderRoll", 0.3, 0.3)
             motion.setAngles("LElbowYaw", -1.2, 0.3)
             motion.setAngles("LElbowRoll", -0.4, 0.3)
-            motion.setAngles("LHand", 1.0, 0.3)
+            motion.setAngles("LHand", 3,14159, 0.3)
 
         logger.debug("ThumbUp gesture executed for " + hand)
         socketio_wrapper("/motion/arm/thumbup/finished")
