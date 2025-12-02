@@ -87,6 +87,27 @@ def setBuffer():
     if len(buffer) > 16384:
         return Response("Buffer too large", status=400)
 
+    audio.sendRemoteBufferToOutput(nbOfFrames, buffer)
+
+    return Response("", status=200)
+
+@app.route("/robot/output/setBufferAsync", methods=["POST"])
+@log("/robot/output/setBuffer")
+def setBuffer():
+    """
+    Expects 48 kHz PCM 16-bit stereo interleaved audio data (<16 KB) as raw body.
+    nbOfFrames is passed as query parameter.
+    """
+    nbOfFrames = int(request.args["nbOfFrames"])
+    buffer = request.get_data()  # raw bytes from request body
+    frame_number = int(request.args["messageNumber"])
+
+    logger.warning("Received message number %d", frame_number)
+
+    # Optionally: sanity check the size
+    if len(buffer) > 16384:
+        return Response("Buffer too large", status=400)
+
     audio.sendRemoteBufferToOutput(nbOfFrames, buffer, _async=True)
 
     return Response("", status=200)
