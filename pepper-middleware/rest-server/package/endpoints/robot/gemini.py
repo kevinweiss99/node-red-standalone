@@ -55,9 +55,6 @@ CONFIG = types.LiveConnectConfig(
     ),
 )
 
-# -------------------------------------------------------------------------
-# Globals for session lifecycle
-# -------------------------------------------------------------------------
 
 main = None          # type: AudioLoop | None
 loop = None          # type: asyncio.AbstractEventLoop | None
@@ -65,9 +62,6 @@ loop_thread = None   # type: threading.Thread | None
 session_lock = threading.Lock()
 
 
-# -------------------------------------------------------------------------
-# Helpers for Pepper audio
-# -------------------------------------------------------------------------
 
 def gemini_mono24k_to_pepper_stereo48k(mono_24k_pcm: bytes) -> bytes:
     """Convert 24 kHz mono int16 PCM → 48 kHz stereo interleaved int16 PCM."""
@@ -97,14 +91,14 @@ def send_buffer_to_pepper(stereo_48k_pcm: bytes):
         if nb_frames <= 0:
             continue
 
-        # Direct NAOqi call (no HTTP hop) – you already had this working:
+        logger.info("sending audio buffer to pepper of size %d", nb_frames)
         audio.sendRemoteBufferToOutput(nb_frames, chunk, _async=True)
 
 
-# -------------------------------------------------------------------------
-# AudioLoop: handles Gemini Live session and audio I/O
-# -------------------------------------------------------------------------
 
+
+
+# handles Gemini Live session and audio I/O
 class AudioLoop:
     def __init__(self):
         self.audio_in_queue: asyncio.Queue[bytes] | None = None
@@ -159,7 +153,7 @@ class AudioLoop:
     async def run(self):
         """Main lifecycle: connect to Gemini and run tasks until stopped."""
         self.audio_in_queue = asyncio.Queue()
-        self.out_queue = asyncio.Queue(maxsize=20)
+        self.out_queue = asyncio.Queue(maxsize=200)
 
         try:
             async with client.aio.live.connect(model=MODEL, config=CONFIG) as session:
@@ -192,10 +186,8 @@ class AudioLoop:
         await self.out_queue.put({"data": pcm_bytes, "mime_type": "audio/pcm"})
 
 
-# -------------------------------------------------------------------------
-# Background thread / loop management
-# -------------------------------------------------------------------------
 
+# Background thread / loop management
 def _run_audio_loop():
     """Target function for background thread."""
     global main, loop
@@ -213,9 +205,8 @@ def _run_audio_loop():
             # main & loop will be set to None in stop handler after join
 
 
-# -------------------------------------------------------------------------
-# Start / Stop / Speak endpoints (HTTP + Socket.IO)
-# -------------------------------------------------------------------------
+
+
 
 @socketio.on("/robot/gemini/start")
 @app.route("/robot/gemini/start", methods=["POST"])
@@ -291,7 +282,7 @@ def speak_to_gemini():
     # Enqueue audio for Gemini on its event loop
     try:
         fut = asyncio.run_coroutine_threadsafe(main.enqueue_audio(pcm_bytes), loop)
-        fut.result(timeout=0.5)
+        fut.result(timeout=2.0)
     except Exception:
         logger.exception("Error enqueuing audio for Gemini")
         return Response("Error sending audio to Gemini", status=500)
@@ -316,7 +307,7 @@ def set_gemini_api_key():
         return Response("Missing 'api_key' in JSON", status=400)
 
     with session_lock:
-        # Prevent accidental change while a model session is active
+        # Prevent change while session is active
         if loop_thread is not None and loop_thread.is_alive():
             logger.warning("Attempt to change API key while session active.")
             return Response(
