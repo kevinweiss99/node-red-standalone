@@ -183,7 +183,14 @@ class AudioLoop:
         """Coroutine: push incoming PCM to out_queue for Gemini."""
         if self.out_queue is None:
             return
-        await self.out_queue.put({"data": pcm_bytes, "mime_type": "audio/pcm"})
+
+        try:
+            self.out_queue.put_nowait({"data": pcm_bytes, "mime_type": "audio/pcm"})
+        except asyncio.QueueFull:
+            logger.warning("enqueue_audio: queue full, dropping frame")
+            return
+        except Exception as e:
+            logger.exception("Unexpected error in enqueue_audio")
 
 
 
@@ -218,7 +225,7 @@ def start_gemini_session():
     with session_lock:
         if loop_thread is not None and loop_thread.is_alive():
             logger.info("Gemini session already running")
-            return Response(200)
+            return Response(status=200)
 
         # Reset in case anything stale is hanging around
         main = None
@@ -271,7 +278,7 @@ def speak_to_gemini():
 
     # Only accept input if a session is active
     with session_lock:
-        if main is None or loop is None:
+        if main is None or loop is None or loop.is_closed():
             logger.warning("speak_to_gemini called but no active Gemini session")
             return Response("Gemini session not started", status=400)
 
@@ -281,13 +288,19 @@ def speak_to_gemini():
 
     # Enqueue audio for Gemini on its event loop
     try:
+        # schedule on async loop
         fut = asyncio.run_coroutine_threadsafe(main.enqueue_audio(pcm_bytes), loop)
-        fut.result(timeout=2.0)
-    except Exception:
-        logger.exception("Error enqueuing audio for Gemini")
-        return Response("Error sending audio to Gemini", status=500)
+
+        # get the real exception from inside the coroutine
+        fut.result(timeout=1.0)
+
+    except Exception as e:
+        logger.error("Error enqueuing audio for Gemini: %s", e)
+        logger.error("Full exception:", exc_info=True)
+        return Response(f"Error sending audio to Gemini: {e}", status=500)
 
     return Response(status=200)
+
 
 @socketio.on("/robot/gemini/set_api_key")
 @app.route("/robot/gemini/set_api_key", methods=["POST"])
