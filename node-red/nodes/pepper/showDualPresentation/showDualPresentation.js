@@ -27,9 +27,8 @@ module.exports = RED => {
 
         node.on("input", msg => {
             ch.emit(config.url);
-
             if (socket.connected) {
-                node.send(msg);
+                node.send(config.url);
             }
         });
 
