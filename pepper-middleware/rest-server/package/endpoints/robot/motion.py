@@ -73,9 +73,10 @@ def arm_fingerpoint(hand=None):
         motion.moveTo(0, 0, head_yaw)
 
         if hand == "RHand":
-            motion.setAngles("RShoulderPitch", -0.3, 0.2)
-            motion.setAngles("RElbowRoll", 0.5, 0.2)
-            motion.setAngles("RHand", 4.7, 0.2)
+            motion.setAngles("RShoulderPitch", 1.5, 0.2)  # Arm nach hinten
+            motion.setAngles("RShoulderRoll", -0.3, 0.2)  # leicht nach außen
+            motion.setAngles("RElbowRoll", -1.0, 0.2)      # Ellbogen angewinkelt nach hinten
+            motion.setAngles("RHand", 0.0, 0.2)           # Hand leicht geöffnet
 
         elif hand == "LHand":
             motion.setAngles("LShoulderPitch", -0.4, 0.2)
