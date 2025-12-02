@@ -122,5 +122,9 @@
     {
         "value": "animations/Stand/Gestures/ShowSky_11",
         "label": "ShowSky_11"
+    },
+    {
+        "value": "animations/Stand/Gestures/You_1",
+        "label": "you_1"
     }
 ]
