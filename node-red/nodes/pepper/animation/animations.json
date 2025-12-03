@@ -56,14 +56,6 @@
         "label": "Far 2"
     },
     {
-        "value": "animations/Stand/Gestures/Explain_1",
-        "label": "Explain 1"
-    },
-    {
-        "value": "animations/Stand/Gestures/Explain_2",
-        "label": "Explain 2"
-    },
-    {
         "value": "animations/Stand/Emotions/Positive/Happy_4",
         "label": "Nod"
     },
@@ -126,10 +118,16 @@
     {
         "value": "animations/Stand/Gestures/You_1",
         "label": "you_1"
-    },{
-        "value": "animations/Stand/Gestures/Explain_11",
-        "label": "Explain_11"
-    },{
+    },
+    {
+        "value": "animations/Stand/Gestures/Explain_1",
+        "label": "Explain 1"
+    },
+    {
+        "value": "animations/Stand/Gestures/Explain_2",
+        "label": "Explain 2"
+    },
+    {
         "value": "animations/Stand/Gestures/Explain_3",
         "label": "Explain_3"
     },{
@@ -150,5 +148,9 @@
     },{
         "value": "animations/Stand/Gestures/Explain_10",
         "label": "Explain_10"
+    },
+    {
+        "value": "animations/Stand/Gestures/Explain_11",
+        "label": "Explain_11"
     }
 ]
