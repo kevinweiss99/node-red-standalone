@@ -20,7 +20,10 @@ def on_battery_charge_changed(event, data):
 
 if session:
     pepper_event_publisher = Publisher()
-    session.registerService(pepper_event_publisher.__class__.__name__, pepper_event_publisher)
+    try:
+        session.registerService(pepper_event_publisher.__class__.__name__, pepper_event_publisher)
+    except RuntimeError:
+        print("Publisher already registered, skipping...")
 
     on_battery_subscriber = Subscriber(PepperEvents.BATTERY_CHARGE_CHANGED.value, on_battery_charge_changed)
 
