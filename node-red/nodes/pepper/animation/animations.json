@@ -126,5 +126,29 @@
     {
         "value": "animations/Stand/Gestures/You_1",
         "label": "you_1"
+    },{
+        "value": "animations/Stand/Gestures/Explain_2",
+        "label": "Explain_2"
+    },{
+        "value": "animations/Stand/Gestures/Explain_3",
+        "label": "Explain_3"
+    },{
+        "value": "animations/Stand/Gestures/Explain_4",
+        "label": "Explain_4"
+    },{
+        "value": "animations/Stand/Gestures/Explain_5",
+        "label": "Explain_5"
+    },{
+        "value": "animations/Stand/Gestures/Explain_6",
+        "label": "Explain_6"
+    },{
+        "value": "animations/Stand/Gestures/Explain_7",
+        "label": "Explain_7"
+    },{
+        "value": "animations/Stand/Gestures/Explain_8",
+        "label": "Explain_8"
+    },{
+        "value": "animations/Stand/Gestures/Explain_10",
+        "label": "Explain_10"
     }
 ]
