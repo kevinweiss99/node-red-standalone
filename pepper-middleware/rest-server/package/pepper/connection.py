@@ -50,6 +50,13 @@ tts = get_service(session, "ALTextToSpeech")
 tts_animated = get_service(session, "ALAnimatedSpeech")
 video = get_service(session, "ALVideoDevice")
 
+is_playing = False
+def signal_handler(args):
+    global is_playing
+    is_playing = args
+    logging.error("RUNNING_AUDIO_SIGNAL_HANDLER_OMG: " + str(args))
+signal_id = audio.speakersPlaying.connect(signal_handler)
+
 ERROR_NO_CONNECTION = "No connection to robot could be established"
 
 if connection_type == ConnectionType.DISCONNECTED:
