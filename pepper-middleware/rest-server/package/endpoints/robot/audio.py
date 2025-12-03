@@ -3,6 +3,7 @@ from flask import request, Response
 import logging
 
 from ...server import app, socketio
+from ...pepper import connection
 from ...pepper.connection import audio
 from ...decorator import log
 
@@ -32,55 +33,11 @@ def get_general_volume():
 
 def _get_general_volume():
     output_volume = audio.getOutputVolume()
-    
     if not output_volume:
         output_volume = "-"
-
     return output_volume
 
-@app.route("/robot/output/setBuffer", methods=["POST"])
-@log("/robot/output/setBuffer")
-def setBuffer():
-    """
-    Expects 48 kHz PCM 16-bit stereo interleaved audio data (<16 KB) as raw body.
-    nbOfFrames is passed as query parameter.
-    """
-    nbOfFrames = int(request.args["nbOfFrames"])
-    buffer = request.get_data()  # raw bytes from request body
-    frame_number = int(request.args["messageNumber"])
-
-    logger.warning("Received message number %s", frame_number)
-
-    # Optionally: sanity check the size
-    if len(buffer) > 16384:
-        return Response("Buffer too large", status=400)
-
-    audio.sendRemoteBufferToOutput(nbOfFrames, buffer, _async=True)
-    return Response("", status=200)
-
-
-@app.route("/robot/output/setBufferWithConvert", methods=["POST"])
-@log("/robot/output/setBufferWithConvert")
-async def setBufferWithConvert():
-    """
-    Expects 48 kHz PCM 16-bit stereo interleaved audio data of any size as raw body.
-    """
-    stereo_48k_pcm = request.get_data()  # raw bytes from request body
-    frame_number = int(request.args["messageNumber"])
-
-    logger.warning("Received message number %s", frame_number)
-
-    # Each stereo frame is 4 bytes (2 channels × 2 bytes)
-    MAX_PEPPER_BUFFER_BYTES = 16384
-    for offset in range(0, len(stereo_48k_pcm), MAX_PEPPER_BUFFER_BYTES):
-        chunk = stereo_48k_pcm[offset:offset + MAX_PEPPER_BUFFER_BYTES]
-        if not chunk:
-            continue
-        nb_frames = len(chunk) // 4
-        if nb_frames <= 0:
-            continue
-        
-        await asyncio.sleep(0.08)
-        audio.sendRemoteBufferToOutput(nb_frames, chunk, _async=True)
-    
-    return Response("", status=200)
+@app.route("/robot/presentation/is_audio_playing", methods=["GET"])
+@log("/robot/presentation/is_audio_playing")
+def check_is_playing():
+    return Response("Is_Playing: " + str(connection.is_playing), status=200)
